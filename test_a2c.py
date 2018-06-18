@@ -3,7 +3,7 @@ __author__ = 'kimangkhun'
 if __name__=="__main__":
     """
     Note that I've already trained the agent
-    If you want to retrain it, just comment line 20, and uncomment the line 50 to save your agent
+    If you want to retrain it, just comment line 22, and uncomment the line 52 to save your agent
     If you want to continue to train the agent and save the new agent, just uncomment the line 50 to save your
     retrained agent
     """
