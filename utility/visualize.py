@@ -22,19 +22,19 @@ class visualize:
         self.colors = ['green', 'red']
         self.ax = ax
         # draw lines for electric components
-        self.ax.plot([2.5, 3], [11, 9], color='black', linewidth=line_width)    # generator1
-        self.ax.plot([6, 6], [10, 12], color='black', linewidth=line_width)     # generator2
-        self.ax.plot([9, 9.5], [9, 11], color='black', linewidth=line_width)    # generator3
-        self.ax.plot([9, 10.5], [9, 10], color='black', linewidth=line_width)   # consumer1
-        self.ax.plot([9, 10.5], [9, 8], color='black', linewidth=line_width)    # external1
-        self.ax.plot([9, 10.5], [5, 5], color='black', linewidth=line_width)    # generator4
-        self.ax.plot([9, 9], [5, 3], color='black', linewidth=line_width)       # consumer2
-        self.ax.plot([4, 3.5], [5, 3], color='black', linewidth=line_width)     # external2
+        self.ax.plot([2.5, 3], [11, 9], color='green', linewidth=line_width)    # generator1
+        self.ax.plot([6, 6], [10, 12], color='green', linewidth=line_width)     # generator2
+        self.ax.plot([9, 9.5], [9, 11], color='green', linewidth=line_width)    # generator3
+        self.ax.plot([9, 10.5], [9, 10], color='red', linewidth=line_width)   # consumer1
+        self.ax.plot([9, 10.5], [9, 8], color='blue', linewidth=line_width)    # external1
+        self.ax.plot([9, 10.5], [5, 5], color='green', linewidth=line_width)    # generator4
+        self.ax.plot([9, 9], [5, 3], color='red', linewidth=line_width)       # consumer2
+        self.ax.plot([4, 3.5], [5, 3], color='blue', linewidth=line_width)     # external2
 
         # draw electric components
-        self.ax.plot(generators[:, 0], generators[:, 1], "b8", markersize=25, alpha=1.0)
-        self.ax.plot(externals[:, 0], externals[:, 1], "go", markersize=25, alpha=1.0)
-        self.ax.plot(consumers[:, 0], consumers[:, 1], "co", markersize=25, alpha=1.0)
+        self.ax.plot(generators[:, 0], generators[:, 1], "g8", markersize=25, alpha=1.0)
+        self.ax.plot(externals[:, 0], externals[:, 1], "bo", markersize=25, alpha=1.0)
+        self.ax.plot(consumers[:, 0], consumers[:, 1], "ro", markersize=25, alpha=1.0)
         self.ax.plot(substations[:, 0], substations[:, 1], "ys", markersize=25, alpha=1.0)
         self.ax.set_xticks([])
         self.ax.set_yticks([])

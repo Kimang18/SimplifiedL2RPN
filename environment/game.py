@@ -216,7 +216,7 @@ class Environment:
             info = "No overflows"
             return self._flows.flatten(), 1, False, info
 
-        elif nb_overflow <= 3:
+        elif nb_overflow < 3:
             state = self._flows.flatten()             # no need to update injections
             info = "There are lines overflown"
             return state, -nb_overflow * 0.1, False, info
