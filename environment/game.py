@@ -180,7 +180,6 @@ class Environment:
         else:
             disconnect = np.setdiff1d(np.arange(self.amt_lines), connect)
 
-            # the line injection index start from 2
             disconnect = self._map_line[disconnect[:]]
 
             # add the line injection index
@@ -211,7 +210,6 @@ class Environment:
             self._set_injections()              # update injections
             self._flows = np.array(self._chronics.loc[self._chronics_ind][0:14])
             self._last_action = np.ones(self.amt_lines, dtype=int)
-            self._flows, f = compute_flows(self._F, self._injections, self._idx_injections)
             self._check_overflow(self._flows)         # update overflown lines
             info = "No overflows"
             return self._flows.flatten(), 1, False, info
@@ -230,7 +228,6 @@ class Environment:
         self._chronics_ind = np.random.randint(0, 8228)
         self._set_injections()
         self._flows = np.array(self._chronics.loc[self._chronics_ind][0:14])    # Because last element is the convergence flag
-        #self._flows, f = compute_flows(self._F, self._injections, self._idx_injections)
         self._check_overflow(self._flows)
         self._last_action = np.ones(self.amt_lines, dtype=int)
 
