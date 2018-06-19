@@ -54,12 +54,6 @@ class Environment:
         self._set_injections()
 
         # Thermal limits
-        """
-        self._thermal_limits = np.zeros(6, dtype=float)
-        for i in range(self.amt_lines):
-            self._thermal_limits[i] = max(np.abs(self._chronics[self._chronics.columns[self._map_line[i]]].quantile(0.95)),
-                                          np.abs(self._chronics[self._chronics.columns[self._map_line[i]]].quantile(0.05)))
-        """
         self._thermal_limits = np.array([263.2638898, 161.4654948, 302.82674594,
                                          332.94697347, 117.03188555, 199.62076482])
 

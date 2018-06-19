@@ -307,7 +307,9 @@ class Greedy:
             if best_reward < reward:
                 best_action = np.copy(action)
                 best_reward = reward
-        print(best_action, best_reward)
+            elif best_reward == reward:
+                if len(np.nonzero(action)) > len(np.nonzero(best_action)):
+                    best_action = np.copy(action)
         return best_action
 
 if __name__=="__main__":
