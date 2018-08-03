@@ -1,32 +1,69 @@
-__author__ = "kimangkhun"
 
 if __name__=="__main__":
+    """
+    Note that I've already trained the agent
+    If you want to retrain it, just comment line 22, and uncomment the line 52 to save your agent
+    If you want to continue to train the agent and save the new agent, just uncomment the line 52 to save your
+    retrained agent
+    """
     from environment.game import Environment
+    from agent.Agent import DAgger, Greedy
     from collections import deque
     import matplotlib.pyplot as plt
     import numpy as np
     from tqdm import tqdm
 
     env = Environment()
-    #env.seed(1)  # env.seed(3) to get the same result in video
+    #env.seed(3)
     s = env.reset()
+    obs_shape = s.shape
+    n_action_shape = env.amt_lines
+    ag = DAgger(obs_shape)
     mobile_returns = deque(maxlen=200)
     mobile_timesteps = deque(maxlen=200)
     avg_returns = []
     avg_timesteps = []
-    #max_timestep = 100000
     EPISODES = 3000
     env.seed(1)
-    i_ep = 0
+    RENDER = True
+    # for i_ep in range(EPISODES):
     current_ts = 0
-    #for i_ep in range(EPISODES):
+    i_ep = 0
+    ## Collect data for DAgger
+    human = Greedy()
+    while len(ag.memory) < 2048:
+        total_rewards = 0.0
+        h = 0
+        while True:
+            env_action = np.zeros(17)
+            action, _ = human.choose_action(s, env)
+            env_action[11:] = np.copy(action)
+            sprime, reward, done, info = env.step(env_action)
+            ag.remember(s, action)
+            total_rewards += reward
+            if done:
+                print("TS: \t{}, total rewards: \t{}".format(h, total_rewards))
+                s = env.reset()
+                break
+            elif h == 199:
+                print("TS: \t{}, total rewards: \t{}".format(h, total_rewards))
+                s = env.reset()
+                break
+            s = np.copy(sprime)
+            h += 1
+    ag.train()
+
     while i_ep < EPISODES:
         total_rewards = 0.0
         h = 0
-        while True:#for h in range(200):
-            #env.render()
-            action = np.ones(env.amt_lines, dtype=int)
+        while True:
+            """
+            if RENDER:
+                q_value = ag.prob_action(s)
+                env.render(show=True, q_value=q_value, str_action=ag.action_space._str_actions)
+            """
             env_action = np.zeros(17)
+            action = ag.choose_action(s, env)
             env_action[11:] = np.copy(action)
             sprime, reward, done, info = env.step(env_action)
             total_rewards += reward
@@ -41,6 +78,7 @@ if __name__=="__main__":
                 current_ts += h + 1
                 break
             elif h == 199:
+                # RENDER = False
                 print("Epi: \t{}, Ts: \t{}, total rewards: \t{}, curr_ts: \t{}".format(i_ep, h, total_rewards,
                                                                                        current_ts))
                 mobile_returns.append(total_rewards)
@@ -50,8 +88,19 @@ if __name__=="__main__":
                 s = env.reset()
                 current_ts += h + 1
                 break
+            s = np.copy(sprime)
             h += 1
+
         i_ep += 1
+        # ag.learn()
+        #if i_ep % 10 == 0:
+        #    ag.train()
+        ag.train()
+        #    ag.gamma *= 0.99
+        if i_ep % 500 == 0:
+            ag.save_weights("Data/dagger_weight")
+
+    ag.save_weights("Data/dagger_weight")
 
     plt.ioff()
 
@@ -61,7 +110,6 @@ if __name__=="__main__":
     plt.xlabel("number of episodes")
     plt.title("Average return over episodes")
     plt.xlim(0, EPISODES)
-    #plt.ylim(-250, 250)
 
     fig, ax = plt.subplots(figsize=(16, 6))
     plt.plot(range(len(avg_returns)), avg_timesteps)
@@ -69,7 +117,9 @@ if __name__=="__main__":
     plt.xlabel("number of episodes")
     plt.title("Average timesteps over episodes")
     plt.xlim(0, EPISODES)
-    #plt.ylim(-250, 250)
+
     plt.show()
-    np.savetxt("Data/average_returns_donothing.txt", avg_returns, fmt='%.3f')
-    np.savetxt("Data/average_timesteps_donothing.txt", avg_timesteps, fmt='%.3f')
+
+    np.savetxt("Data/average_returns_dagger.txt", avg_returns, fmt='%.3f')
+    np.savetxt("Data/average_timesteps_dagger.txt", avg_timesteps, fmt='%.3f')
+

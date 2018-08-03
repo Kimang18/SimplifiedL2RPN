@@ -2,31 +2,33 @@ __author__ = "kimangkhun"
 
 if __name__=="__main__":
     from environment.game import Environment
+    from agent.Agent import mcts
     from collections import deque
     import matplotlib.pyplot as plt
     import numpy as np
-    from tqdm import tqdm
 
     env = Environment()
-    #env.seed(1)  # env.seed(3) to get the same result in video
+    #env.seed(3) #to get the same result in video
     s = env.reset()
+    ag = mcts()
     mobile_returns = deque(maxlen=200)
     mobile_timesteps = deque(maxlen=200)
     avg_returns = []
     avg_timesteps = []
-    #max_timestep = 100000
+    search_value = []
     EPISODES = 3000
+    #max_timestep = 100000
+    current_ts = 0
     env.seed(1)
     i_ep = 0
-    current_ts = 0
     #for i_ep in range(EPISODES):
     while i_ep < EPISODES:
         total_rewards = 0.0
         h = 0
         while True:#for h in range(200):
             #env.render()
-            action = np.ones(env.amt_lines, dtype=int)
             env_action = np.zeros(17)
+            action = ag.choose_action(s, env)
             env_action[11:] = np.copy(action)
             sprime, reward, done, info = env.step(env_action)
             total_rewards += reward
@@ -50,8 +52,13 @@ if __name__=="__main__":
                 s = env.reset()
                 current_ts += h + 1
                 break
+            s = np.copy(sprime)
             h += 1
         i_ep += 1
+        if len(search_value) == 0:
+            search_value = np.copy(ag._value)
+        else:
+            search_value = np.vstack((search_value, ag._value))
 
     plt.ioff()
 
@@ -61,7 +68,6 @@ if __name__=="__main__":
     plt.xlabel("number of episodes")
     plt.title("Average return over episodes")
     plt.xlim(0, EPISODES)
-    #plt.ylim(-250, 250)
 
     fig, ax = plt.subplots(figsize=(16, 6))
     plt.plot(range(len(avg_returns)), avg_timesteps)
@@ -70,6 +76,16 @@ if __name__=="__main__":
     plt.title("Average timesteps over episodes")
     plt.xlim(0, EPISODES)
     #plt.ylim(-250, 250)
+
+    fig, ax = plt.subplots(figsize=(16, 6))
+    for i in range(6):
+        plt.plot(range(EPISODES), search_value[:, i], label="line {}".format(i+1))
+    plt.ylabel("value")
+    plt.xlabel("number of episodes")
+    plt.title("Average timesteps over episodes")
+    plt.legend(loc='best')
+    plt.xlim(0, EPISODES)
+
     plt.show()
-    np.savetxt("Data/average_returns_donothing.txt", avg_returns, fmt='%.3f')
-    np.savetxt("Data/average_timesteps_donothing.txt", avg_timesteps, fmt='%.3f')
+    np.savetxt("Data/average_returns_greedy_prior.txt", avg_returns, fmt='%.3f')
+    np.savetxt("Data/average_timesteps_greedy_prior.txt", avg_timesteps, fmt='%.3f')

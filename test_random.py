@@ -14,7 +14,7 @@ if __name__=="__main__":
     mobile_timesteps = deque(maxlen=200)
     avg_returns = []
     avg_timesteps = []
-    EPISODES = 1000
+    EPISODES = 3000
     for i_ep in tqdm(range(EPISODES)):
         total_rewards = 0.0
         for h in range(200):
@@ -46,7 +46,7 @@ if __name__=="__main__":
     plt.xlabel("number of episodes")
     plt.title("Average return over episodes")
     plt.xlim(0, EPISODES)
-    plt.ylim(-250, 250)
+    #plt.ylim(-250, 250)
 
     fig, ax = plt.subplots(figsize=(16, 6))
     plt.plot(range(len(avg_returns)), avg_timesteps)
