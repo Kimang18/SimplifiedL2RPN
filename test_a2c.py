@@ -37,18 +37,17 @@ if __name__=="__main__":
         total_rewards = 0.0
         h = 0
         while True:
-
+            """
             if RENDER:
                 q_value = ag.prob_action(s)
                 env.render(show=True, q_value=q_value, str_action=ag.action_space._str_actions)
-
+            """
             env_action = np.zeros(17)
             action = ag.choose_action(s)
             env_action[11:] = np.copy(action)
             sprime, reward, done, info = env.step(env_action)
-            ag.learn_step(s, action, reward, sprime, done)     # actor critic - online learning
-            #ag.store_transition(s, action, reward)
-            #ag.remember(s, action, reward, sprime, done)
+            #ag.learn_step(s, action, reward, sprime, done)     # actor critic - online learning
+            ag.remember(s, action, reward, sprime, done)
             total_rewards += reward
             if done:
                 print("Epi: \t{}, Ts: \t{}, total rewards: \t{}, curr_ts: \t{}".format(i_ep, h, total_rewards, current_ts))
@@ -73,7 +72,7 @@ if __name__=="__main__":
             h += 1
 
         i_ep += 1
-        #ag.replay(batch_size)
+        ag.replay(batch_size)
 
         if i_ep % 500 == 0:
             ag.save_weights("Data")
