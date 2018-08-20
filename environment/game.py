@@ -98,11 +98,51 @@ class Graph(object):
         return res
 
 class Environment:
+    class Action_Space:
+        def __init__(self):
+            self.action_size = 6
+            # Create all possible action
+            self._actions = []
+            self._str_actions = []
+            n_action = 0
+            np.random.seed(1)
+            while (n_action < 64):
+                a = np.random.random_integers(0, 1, size=self.action_size)
+                if str(a) in self._str_actions:
+                    continue
+                else:
+                    self._actions.append(a)
+                    self._str_actions.append(str(a))
+                    n_action += 1
+
+            # Help agent to reduce action space by deleting useless action
+            toRemove = []
+            for i in range(len(self._actions)):
+                if len(np.nonzero(self._actions[i])[0]) < 4:
+                    toRemove.append(i)
+            for i in sorted(toRemove, reverse=True):
+                del self._actions[i]
+                del self._str_actions[i]
+            self.n = len(self._actions)
+
+        def __repr__(self):
+            print(self._actions)
+
+        def get(self, i):
+            return self._actions[i]
+
+        def get_str(self, i):
+            return self._str_actions[i]
+
+        def get_index(self, action):
+            return self._str_actions.index(str(action))
+
     def __init__(self):
         # TODO: cascading failure
 
         # Public:
         self.amt_lines = 6
+        self.action_space = self.Action_Space()
 
         # Private:
         # self._F is the power grid topology
@@ -422,11 +462,6 @@ class Environment:
         #state = np.vstack((state_0, state_1))
         state = np.hstack((state_0.transpose(), state_1.transpose()))
 
-        """ Provide usage percentage"""
-        #for i in range(self.amt_lines):
-            # state[self._map_line[i]] = self._usage_percentage[i]
-            #self.flows_series[i].append(self._flows[self._map_line[i]])
-
 
         if nb_overflow_0 > 0 and nb_overflow_1 == 0:
             if self._nb_overflows == 0:
@@ -474,7 +509,6 @@ class Environment:
         self._F[8] = np.array([7.0, 8.0])  # Line L5
 
         self._solved = False
-        #self.rew_signal.clear()
         self._chronics_ind = np.random.randint(0, 7949)
         self._set_injections()
         self._flows = np.array(self._chronics.loc[self._chronics_ind][0:14])    # Because last element is the convergence flag
@@ -493,11 +527,6 @@ class Environment:
         state_1 = np.append(self._flows.flatten(), [nb_overflow_1])
         state_1 = np.reshape(state_1, [1, len(state_1)])
         state = np.hstack((state_0.transpose(), state_1.transpose()))
-        #state = np.vstack((state_0, state_1))
-        #for i in range(self.amt_lines):
-            #state[self._map_line[i]] = self._usage_percentage[i]
-            #self.flows_series[i].clear()
-            #self.flows_series[i].append(self._flows[self._map_line[i]])
 
         return state
 
