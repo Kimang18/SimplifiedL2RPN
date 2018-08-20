@@ -17,7 +17,6 @@ from keras import backend as K
 from keras.utils import np_utils
 import matplotlib.pyplot as plt
 from collections import deque
-import heapq as queue
 
 def softmax(x):
     """Compute softmax values for each sets of scores in x."""
@@ -26,14 +25,14 @@ def softmax(x):
 
 class Action_Space:
     def __init__(self):
-        self.action_size = 6
+        self.nb_lines = 6
         # Create all possible action
         self._actions = []
         self._str_actions = []
         n_action = 0
         np.random.seed(1)
         while (n_action < 64):
-            a = np.random.random_integers(0, 1, size=self.action_size)
+            a = np.random.random_integers(0, 1, size=self.nb_lines)
             if str(a) in self._str_actions:
                 continue
             else:
@@ -68,11 +67,6 @@ class Actor_Critic:
         self.learning_rate = 0.0023
         self.memory = deque(maxlen=2048)
         self.tau = 0.999
-        """ For MC method"""
-        self.state_buf = []
-        self.action_buf = []
-        self.reward_buf = []
-        """**************"""
         self.action_space = Action_Space()
         self.train_fn = []
         self._build_model()
@@ -335,9 +329,8 @@ class Actor_Critic:
 
 
 class DQN:
-    def __init__(self, obs_shape, action_size):
+    def __init__(self, obs_shape):
         self.obs_shape = obs_shape
-        self.action_size = action_size
         self.memory = deque(maxlen=2048)
         self.gamma = 1.0            # discount rate
         self.epsilon = 1.0          # exploration rate
@@ -377,8 +370,7 @@ class DQN:
         model.add(LSTM(32, return_sequences=True))
         model.add(LSTM(32))
         """
-
-        model.add(Dense(self.action_space.n, activation='linear'))   # len(action_space) = 64
+        model.add(Dense(self.action_space.n, activation='linear'))
         model.compile(
             loss='mse',
             optimizer=Adam(lr=self.learning_rate)
@@ -387,9 +379,7 @@ class DQN:
 
     def remember(self, state, action, reward, next_state, done):
         obs = np.reshape(state, [1, 15, 2])
-        #obs = np.reshape(state, [1, 2, 15])
         next_obs = np.reshape(next_state, [1, 15, 2])
-        #next_obs = np.reshape(next_state, [1, 2, 15])
         if reward > 0:
             self.memory.append((obs, action, reward, next_obs, done))
         self.memory.append((obs, action, reward, next_obs, done))
@@ -770,7 +760,7 @@ class DAgger(object):
         self.action_size = self.human.action_space.n
 
         self.agent = self._build_model()
-        self.memory = deque(maxlen=4000)
+        self.memory = deque(maxlen=8000)
 
     def _build_model(self):
         # Neural Network for Deep-Q learning Model

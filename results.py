@@ -3,6 +3,8 @@ __author__ = "kimangkhun"
 import numpy as np
 import matplotlib.pyplot as plt
 
+"""DQN pendant 5 heures"""
+
 EPISODES = 3000
 legends = ["DAgger", "A2C", "DDQN", "DQN", "Random", "Donothing", "Greedy_Prior", "Solver"]
 avg_returns = []
