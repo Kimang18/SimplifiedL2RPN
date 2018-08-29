@@ -69,19 +69,8 @@ class visualize:
         self.ax.text(9.2, 6.7, "L5", fontweight='bold')
         self.ax.text(6, 5.1, "L6", fontweight='bold')
 
-        # for line flows
-        self.axs = []
-        fig = figure(figsize=(7, 8))
-        self.axs.append(subplot(711))
-        self.axs.append(subplot(712))
-        self.axs.append(subplot(713))
-        self.axs.append(subplot(714))
-        self.axs.append(subplot(715))
-        self.axs.append(subplot(716))
-        self.axs.append(subplot(717))
-
     def draw_lines(self, action, lines_color, usage_percentage, injections,
-                   flow_series=None, rew_signal=None, q_value=None, str_actions=None):
+                   q_value=None, str_actions=None):
 
         lines = []
         texts = []
@@ -91,20 +80,6 @@ class visualize:
             texts.append(self.ax.text(self.texts[i][0], self.texts[i][1], str(usage_percentage[i])))
         for i in range(len(injections)):
             compo_texts.append(self.ax.text(self.compo_texts[i][0], self.compo_texts[i][1], str(injections[i])))
-        if flow_series is not None:
-            for i in range(len(flow_series)):
-                self.axs[i].cla()
-                self.axs[i].axhline(self.thermal_limits[i], xmin=0, xmax=100, color='blue')
-                self.axs[i].axhline(-self.thermal_limits[i], xmin=0, xmax=100, color='blue')
-                self.axs[i].plot(range(len(flow_series[i])), flow_series[i], color='black')
-                self.axs[i].set_ylabel("L{}".format(i+1))
-                self.axs[i].set_xlim(0, 100)
-                self.axs[i].set_xticklabels([])
-            self.axs[6].cla()                       # reward signal
-            self.axs[6].plot(range(len(rew_signal)), rew_signal)
-            self.axs[6].set_ylabel("R")
-            self.axs[6].set_xlim(0, 100)
-            self.axs[6].set_ylim(-1.1, 1.1)
         if q_value is not None:
             self.ax_q.cla()
             for i in range(len(q_value)):
@@ -113,7 +88,7 @@ class visualize:
                            align='center', color=colors, ecolor='black', tick_label=str_actions)
             self.ax_q.set_ylim(-1, 10)
         show()
-        pause(0.0001)
+        pause(0.5)
         for i in range(len(lines)):
             l = lines[i].pop(0)
             l.remove()

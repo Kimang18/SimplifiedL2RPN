@@ -198,7 +198,7 @@ class Environment:
                                          389.01455317609054, 450.797754748493, 530.2488324717878])
 
         # line's usage percentage
-        self._usage_percentage = np.zeros(self.amt_lines)
+        self._flows_in_line = np.zeros(self.amt_lines)
 
         # number of lines overflown
         self._flows, conv = compute_flows(self._F, self._injections, self._idx_injections)
@@ -231,7 +231,7 @@ class Environment:
                                             self._solved_flows[9], self._solved_flows[13]])
                 solved_injections = np.around(solved_injections, decimals=2)
                 self.vis.draw_lines(self._solved_action, self._solved_lines_overflown,
-                                    self._solved_usage_percentage, solved_injections)
+                                    self._solved_flows_in_line, solved_injections)
                 self._solved = False
             injections = np.copy(self._flows[0])
             injections = np.append(injections,
@@ -240,8 +240,8 @@ class Environment:
                                            self._flows[9], self._flows[13]])
             injections = np.around(injections, decimals=2)
             self.vis.draw_lines(self._last_action, self._lines_overflown,
-                                self._usage_percentage, injections,
-                                flow_series=None, rew_signal=None, q_value=q_value, str_actions=str_action)#, self.flows_series, self.rew_signal)
+                                self._flows_in_line, injections,
+                                q_value=q_value, str_actions=str_action)#, self.flows_series, self.rew_signal)
 
     def _set_injections(self):
         self._injections = np.array([[self._chronics["generator1"][self._chronics_ind]],
@@ -262,7 +262,7 @@ class Environment:
                 if abs(flows[self._map_line[i]]) > 1.05 * self._thermal_limits[i]:
                     count += 1
                     self._lines_overflown[i] = 1
-                self._usage_percentage[i] = np.around(flows[self._map_line[i]] / self._thermal_limits[i], decimals=2)
+                self._flows_in_line[i] = np.round(flows[self._map_line[i]], decimals=2)
         return count
 
     def _validate_action(self, action):
@@ -436,7 +436,7 @@ class Environment:
         self._solved = True
         self._solved_flows = np.copy(flows)
         self._solved_action = np.copy(self._last_action)
-        self._solved_usage_percentage = np.copy(self._usage_percentage)
+        self._solved_flows_in_line = np.copy(self._flows_in_line)
         self._solved_lines_overflown = np.copy(self._lines_overflown)
         state_0 = np.append(flows.flatten(), [nb_overflow_1])
         state_0 = np.reshape(state_0, [1, len(state_0)])
