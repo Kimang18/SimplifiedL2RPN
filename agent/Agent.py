@@ -10,7 +10,7 @@ random.seed(1)
 
 from keras.models import Sequential, Model
 from keras.layers import Dense, Input, Flatten, concatenate, add, LSTM, BatchNormalization
-from keras.layers import Conv2D, MaxPooling2D, Dropout, Conv1D, GlobalAveragePooling1D, MaxPool1D, PReLU
+from keras.layers import Conv2D, MaxPooling2D, Dropout, Conv1D, GlobalAveragePooling1D, MaxPool1D, PReLU, AveragePooling1D
 from keras.losses import categorical_crossentropy, binary_crossentropy
 from keras.optimizers import Adam
 from keras import backend as K
@@ -755,12 +755,13 @@ class DAgger(object):
     def __init__(self, obs_shape):
         self.obs_shape = obs_shape
         self.action_shape = 6
-        self.learning_rate = 0.008
+        self.learning_rate = 0.009
         self.human = Greedy()
         self.action_size = self.human.action_space.n
 
         self.agent = self._build_model()
         self.memory = deque(maxlen=8000)
+        self.met_states = {}
 
     def _build_model(self):
         # Neural Network for Deep-Q learning Model
@@ -783,15 +784,25 @@ class DAgger(object):
         )
         return model
 
-    def remember(self, state, action):
-        self.memory.append((state, action))
+    def remember(self, state, action, warmup=True):
+        if warmup:
+            encoded_state = hash(state.tostring())
+            if self.met_states.get(encoded_state) is None:
+                self.met_states[encoded_state] = state
+                self.memory.append((state, action))
+        else:
+            self.memory.append((state, action))
 
     def choose_action(self, state, env):
-        """Human action"""
-        action, _ = self.human.choose_action(state, env)
+        encoded_state = hash(state.tostring())
+        if self.met_states.get(encoded_state) is None:
+            ### Never meet this state before
+            self.met_states[encoded_state] = state
+            """Human action"""
+            action, _ = self.human.choose_action(state, env)
 
-        """Save the human action"""
-        self.remember(state, action)
+            """Save the human action"""
+            self.remember(state, action, False)
 
         """Agent acts"""
         obs = np.reshape(state, [1, 15, 2])
@@ -805,7 +816,8 @@ class DAgger(object):
     def train(self):
         states = np.asarray([e[0] for e in self.memory])
         actions = np.asarray([e[1] for e in self.memory])
-        self.agent.train_on_batch(states, actions) #, epochs=1, verbose=0)
+        H = self.agent.fit(states, actions, batch_size=256, epochs=10, verbose=0)
+        #print(H.history)
 
     def save_weights(self, name):
         name = name+".h5"

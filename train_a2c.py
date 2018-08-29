@@ -18,20 +18,20 @@ if __name__=="__main__":
     for i in range(6):
 
         env = Environment()
-        #env.seed(3) #to get the same result in video
+        #env.seed(3)
         s = env.reset()
         obs_shape = s.shape
         n_action_shape = env.amt_lines
         ag = Actor_Critic(obs_shape, n_action_shape)
         print(obs_shape)
-        #ag.load_weights("Data")
+        ag.load_weights("Data")
         batch_size = 32
         mobile_returns = deque(maxlen=200)
         mobile_timesteps = deque(maxlen=200)
         avg_returns = []
         avg_timesteps = []
         EPISODES = 3000
-        env.seed(1)
+        env.seed(3)
         RENDER = True
         #for i_ep in range(EPISODES):
         current_ts = 0
@@ -40,11 +40,9 @@ if __name__=="__main__":
             total_rewards = 0.0
             h = 0
             while True:
-                """
                 if RENDER:
-                    q_value = ag.prob_action(s)
-                    env.render(show=True, q_value=q_value, str_action=ag.action_space._str_actions)
-                """
+                    act_prob = ag.prob_action(s)
+                    env.render(show=True, q_value=act_prob, str_action=ag.action_space._str_actions)
                 env_action = np.zeros(17)
                 action = ag.choose_action(s)
                 env_action[11:] = np.copy(action)
