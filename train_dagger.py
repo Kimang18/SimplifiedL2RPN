@@ -1,11 +1,5 @@
 
 if __name__=="__main__":
-    """
-    Note that I've already trained the agent
-    If you want to retrain it, just comment line 22, and uncomment the line 52 to save your agent
-    If you want to continue to train the agent and save the new agent, just uncomment the line 52 to save your
-    retrained agent
-    """
     from environment.game import Environment
     from agent.Agent import DAgger, Greedy
     from collections import deque
