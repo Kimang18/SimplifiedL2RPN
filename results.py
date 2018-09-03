@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 
 EPISODES = 3000
 legends = ["DAgger", "A2C", "DDQN", "DQN", "Random", "Donothing", "Greedy_Prior", "Solver"]
+colors = ["limegreen", "darkblue", "purple", "dodgerblue", "red", "darkorange", "seagreen", "forestgreen"]
 avg_returns = []
 
-avg_returns.append(np.loadtxt("Data/average_returns_dagger.txt"))
+avg_returns.append(np.loadtxt("Data/average_returns_dagger1.txt"))
 avg_returns.append(np.loadtxt("Data/average_returns_a2c.txt"))
 avg_returns.append(np.loadtxt("Data/average_returns_ddqn.txt"))
 avg_returns.append(np.loadtxt("Data/average_returns_dqn.txt"))
@@ -20,7 +21,7 @@ avg_returns.append(np.loadtxt("Data/average_returns_greedy.txt"))
 
 fig, ax = plt.subplots(figsize=(6, 6))
 for i in range(len(avg_returns)):
-    plt.plot(range(EPISODES), avg_returns[i])
+    plt.plot(range(EPISODES), avg_returns[i], color=colors[i])
 plt.ylabel("Moving average total rewards")
 plt.xlabel("Number of episodes")
 plt.title("Moving average total rewards over 3000 episodes, gamma = 1.0")
@@ -28,7 +29,7 @@ plt.legend(legends, loc='best')
 
 fig, ax = plt.subplots(figsize=(6, 6))
 for i in range(0, len(avg_returns)-1):
-    plt.plot(range(EPISODES), avg_returns[i])
+    plt.plot(range(EPISODES), avg_returns[i], color=colors[i])
 plt.ylabel("Moving average total rewards")
 plt.xlabel("Number of episodes")
 plt.title("Moving average total rewards over 3000 episodes, gamma = 1.0")
@@ -36,7 +37,7 @@ plt.legend(["DAgger", "A2C", "DDQN", "DQN", "Random", "Donothing", "Greedy_Prior
 
 avg_timesteps = []
 
-avg_timesteps.append(np.loadtxt("Data/average_timesteps_dagger.txt"))
+avg_timesteps.append(np.loadtxt("Data/average_timesteps_dagger1.txt"))
 avg_timesteps.append(np.loadtxt("Data/average_timesteps_a2c.txt"))
 avg_timesteps.append(np.loadtxt("Data/average_timesteps_ddqn.txt"))
 avg_timesteps.append(np.loadtxt("Data/average_timesteps_dqn.txt"))
@@ -48,7 +49,7 @@ avg_timesteps.append(np.loadtxt("Data/average_timesteps_greedy.txt"))
 
 fig, ax = plt.subplots(figsize=(6, 6))
 for i in range(len(avg_returns)):
-    plt.plot(range(EPISODES), avg_timesteps[i])
+    plt.plot(range(EPISODES), avg_timesteps[i], color=colors[i])
 plt.ylabel("Moving average timesteps")
 plt.xlabel("Number of episodes")
 plt.title("Moving average timesteps over 3000 episodes, gamma = 1.0")
