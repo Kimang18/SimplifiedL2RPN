@@ -16,8 +16,8 @@ if __name__=="__main__":
         s = env.reset()
         obs_shape = s.shape
         ag = DQN(obs_shape)
-        #ag.load_weights("Data/dqn_weight")
-        #ag.epsilon = 0.01
+        ag.load_weights("Data/dqn_weight")
+        ag.epsilon = 0.01
         mobile_returns = deque(maxlen=200)
         mobile_timesteps = deque(maxlen=200)
         batch_size = 32
@@ -26,7 +26,7 @@ if __name__=="__main__":
         EPISODES = 3000
         #max_timestep = 100000
         RENDER = True
-        env.seed(1)
+        env.seed(3)
         #for i_ep in range(EPISODES):
         current_ts = 0
         i_ep = 0
@@ -34,11 +34,11 @@ if __name__=="__main__":
             total_rewards = 0.0
             h = 0
             while True: #for h in range(200):
-                """
+
                 if RENDER:
                     q_value = ag.quality(s)
                     env.render(show=True, q_value=q_value, str_action=ag.action_space._str_actions)
-                """
+
                 env_action = np.zeros(17)
                 action = ag.choose_action(s)
                 env_action[11:] = np.copy(action)

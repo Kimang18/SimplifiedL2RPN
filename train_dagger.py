@@ -52,7 +52,7 @@ if __name__=="__main__":
             s = np.copy(sprime)
             h += 1
     ag.train()
-
+    env.seed(1)
     while i_ep < EPISODES:
         total_rewards = 0.0
         h = 0
@@ -95,7 +95,8 @@ if __name__=="__main__":
         # ag.learn()
         #if i_ep % 10 == 0:
         #    ag.train()
-        ag.train()
+        if h < 199:
+            ag.train()
         #    ag.gamma *= 0.99
         if i_ep % 500 == 0:
             ag.save_weights("Data/dagger_weight")
@@ -120,6 +121,6 @@ if __name__=="__main__":
 
     plt.show()
 
-    np.savetxt("Data/average_returns_dagger.txt", avg_returns, fmt='%.3f')
-    np.savetxt("Data/average_timesteps_dagger.txt", avg_timesteps, fmt='%.3f')
+    np.savetxt("Data/average_returns_dagger3.txt", avg_returns, fmt='%.3f')
+    np.savetxt("Data/average_timesteps_dagger3.txt", avg_timesteps, fmt='%.3f')
 
