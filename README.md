@@ -8,5 +8,5 @@ The possible action in this project is the line disconnection or reconnection. T
 
 There are 4 RL agents implemented in this project: Dataset Aggregation, Advantages Actor-Critic, Deep Q-learning, and Double Deep Q-learning.
 
-In order the code, first of all, clone this repository. Then install the package requirement with `pip install -r requirements.txt`.
-The create and train another RL agent (also visualizing the power network), please take a look in train_a2c.py, train_dqn.py, and train_ddqn.py.
+In order to use the code, first of all, clone this repository. Then install the package requirement with `pip install -r requirements.txt`.
+To create and train another RL agent (also visualizing the power network), please take a look in train_a2c.py, train_dqn.py, and train_ddqn.py.
